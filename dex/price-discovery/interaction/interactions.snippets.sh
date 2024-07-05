@@ -33,9 +33,9 @@ FIXED_PENALTY_PERCENTAGE= # Hex format; ex: 0xE8D4A51000 (1000000000000 = 10%)
 deployPriceDiscoveryContract() {
     launched_token="0x$(echo -n $LAUNCHED_TOKEN_ID | xxd -p -u | tr -d '\n')"
     accepted_token="0x$(echo -n $ACCEPTED_TOKEN_ID | xxd -p -u | tr -d '\n')"
-    locking_address="0x$(erdpy wallet bech32 --decode $LOCKING_SC_ADDRESS)"
+    locking_address="0x$(mxpy wallet bech32 --decode $LOCKING_SC_ADDRESS)"
 
-    erdpy --verbose contract deploy --recall-nonce \
+    mxpy --verbose contract deploy --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=350000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -55,9 +55,9 @@ deployPriceDiscoveryContract() {
             $locking_address \
         --outfile="deploy-price-discovery.interaction.json" --send || return
 
-    ADDRESS=$(erdpy data parse --file="deploy-price-discovery.interaction.json" --expression="data['emitted_tx']['address']")
+    ADDRESS=$(mxpy data parse --file="deploy-price-discovery.interaction.json" --expression="data['emitted_tx']['address']")
 
-    erdpy data store --key=address-testnet --value=${ADDRESS}
+    mxpy data store --key=address-testnet --value=${ADDRESS}
 
     echo ""
     echo "Price Discovery Smart Contract address: ${ADDRESS}"
@@ -66,9 +66,9 @@ deployPriceDiscoveryContract() {
 upgradePriceDiscoveryContract() {
     launched_token="0x$(echo -n $LAUNCHED_TOKEN_ID | xxd -p -u | tr -d '\n')"
     accepted_token="0x$(echo -n $ACCEPTED_TOKEN_ID | xxd -p -u | tr -d '\n')"
-    locking_address="0x$(erdpy wallet bech32 --decode $LOCKING_SC_ADDRESS)"
+    locking_address="0x$(mxpy wallet bech32 --decode $LOCKING_SC_ADDRESS)"
 
-    erdpy --verbose contract upgrade $PRICE_DISCOVERY_ADDRESS --recall-nonce \
+    mxpy --verbose contract upgrade $PRICE_DISCOVERY_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=350000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -93,9 +93,9 @@ upgradePriceDiscoveryContract() {
 }
 
 setLockingScAddress() {
-    locking_sc_address="0x$(erdpy wallet bech32 --decode $LOCKING_SC_ADDRESS)"
+    locking_sc_address="0x$(mxpy wallet bech32 --decode $LOCKING_SC_ADDRESS)"
 
-    erdpy --verbose contract call $PRICE_DISCOVERY_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $PRICE_DISCOVERY_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=100000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -112,7 +112,7 @@ issueRedeemToken() {
     token_name="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
     token_ticker="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $PRICE_DISCOVERY_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $PRICE_DISCOVERY_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -123,7 +123,7 @@ issueRedeemToken() {
 }
 
 createInitialRedeemTokens() {
-    erdpy --verbose contract call $PRICE_DISCOVERY_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $PRICE_DISCOVERY_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \

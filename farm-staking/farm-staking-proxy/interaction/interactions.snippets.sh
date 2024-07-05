@@ -45,15 +45,15 @@ PROXY_STAKING_FARM_LKMEX="" # Fill in address after deploy
 #   $6 = Staking Farm Token Identifier
 #   $7 = LP Token Identifier
 deployProxyStakeFarmContract() {
-    lp_farm_address="0x$(erdpy wallet bech32 --decode $1)"
-    staking_farm_address="0x$(erdpy wallet bech32 --decode $2)"
-    pair_address="0x$(erdpy wallet bech32 --decode $3)"
+    lp_farm_address="0x$(mxpy wallet bech32 --decode $1)"
+    staking_farm_address="0x$(mxpy wallet bech32 --decode $2)"
+    pair_address="0x$(mxpy wallet bech32 --decode $3)"
     staking_token="0x$(echo -n $4 | xxd -p -u | tr -d '\n')"
     lp_farm_token="0x$(echo -n $5 | xxd -p -u | tr -d '\n')"
     staking_farm_token="0x$(echo -n $6 | xxd -p -u | tr -d '\n')"
     lp_token="0x$(echo -n $7 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract deploy --recall-nonce \
+    mxpy --verbose contract deploy --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=250000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -62,7 +62,7 @@ deployProxyStakeFarmContract() {
         --arguments $lp_farm_address $staking_farm_address $pair_address $staking_token $lp_farm_token $staking_farm_token $lp_token\
         --outfile="deploy-proxy-stake-farm-internal.interaction.json" --send || return
 
-    ADDRESS=$(erdpy data parse --file="deploy-proxy-stake-farm-internal.interaction.json" --expression="data['contractAddress']")
+    ADDRESS=$(mxpy data parse --file="deploy-proxy-stake-farm-internal.interaction.json" --expression="data['contractAddress']")
 
     echo ""
     echo "Metastaking Smart Contract address: ${ADDRESS}"
@@ -79,15 +79,15 @@ deployProxyStakeFarmContract() {
 #   $7 = Staking Farm Token Identifier
 #   $8 = Staking Proxy Address
 upgradeProxyStakeFarmContract() {
-    lp_farm_address="0x$(erdpy wallet bech32 --decode $1)"
-    staking_farm_address="0x$(erdpy wallet bech32 --decode $2)"
-    pair_address="0x$(erdpy wallet bech32 --decode $3)"
+    lp_farm_address="0x$(mxpy wallet bech32 --decode $1)"
+    staking_farm_address="0x$(mxpy wallet bech32 --decode $2)"
+    pair_address="0x$(mxpy wallet bech32 --decode $3)"
     staking_token="0x$(echo -n $4 | xxd -p -u | tr -d '\n')"
     lp_farm_token="0x$(echo -n $5 | xxd -p -u | tr -d '\n')"
     staking_farm_token="0x$(echo -n $6 | xxd -p -u | tr -d '\n')"
     lp_token="0x$(echo -n $7 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract upgrade $8 --recall-nonce \
+    mxpy --verbose contract upgrade $8 --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=200000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -106,7 +106,7 @@ upgradeProxyStakeFarmContract() {
 registerDualYieldToken() {
     farm_token_name="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
     farm_token_ticker="0x$(echo -n $3 | xxd -p -u | tr -d '\n')"
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=100000000 \
@@ -119,7 +119,7 @@ registerDualYieldToken() {
 # params:
 #   $1 = farm contract
 setLocalRolesDualYieldToken() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
           --pem=${WALLET_PEM} \
           --proxy=${PROXY} --chain=${CHAIN_ID} \
           --gas-limit=200000000 \

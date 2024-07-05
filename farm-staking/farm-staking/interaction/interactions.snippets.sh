@@ -45,7 +45,7 @@ ADMINS=""
 deployStakeFarmContract() {
     staking_token="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract deploy --recall-nonce \
+    mxpy --verbose contract deploy --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=200000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -53,7 +53,7 @@ deployStakeFarmContract() {
         --arguments $staking_token $DIVISION_SAFETY_CONSTANT $2 $3 $OWNER $ADMINS \
         --outfile="deploy-stake-farm-internal.interaction.json" --send || return
 
-    ADDRESS=$(erdpy data parse --file="deploy-stake-farm-internal.interaction.json" --expression="data['contractAddress']")
+    ADDRESS=$(mxpy data parse --file="deploy-stake-farm-internal.interaction.json" --expression="data['contractAddress']")
 
     echo ""
     echo "Staking Smart Contract address: ${ADDRESS}"
@@ -67,7 +67,7 @@ deployStakeFarmContract() {
 upgradeStakeFarmContract() {
     staking_token="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract upgrade $1 --recall-nonce \
+    mxpy --verbose contract upgrade $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --metadata-payable \
         --gas-limit=200000000 \
@@ -85,7 +85,7 @@ upgradeStakeFarmContract() {
 registerFarmToken() {
     staking_token_name="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
     staking_token_ticker="0x$(echo -n $3 | xxd -p -u | tr -d '\n')"
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=100000000 \
@@ -105,7 +105,7 @@ registerFarmToken() {
 
 setBoostedYieldsFactors() {
 
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=10000000 \
@@ -120,7 +120,7 @@ setBoostedYieldsFactors() {
 setBoostedYieldsRewardsPercentage() {
     #BOOSTED_YIELDS_PERCENTAGE="0x9c4" # 2500
 
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=10000000 \
@@ -132,7 +132,7 @@ setBoostedYieldsRewardsPercentage() {
 #   $1 = Staking Farm address
 #   $2 = PerBlockRewards in hex
 setPerBlockRewardAmount() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=10000000 \
@@ -143,7 +143,7 @@ setPerBlockRewardAmount() {
 # params
 #   $1 = Staing Farm address
 startProduceRewards() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=32499678 \
@@ -154,7 +154,7 @@ startProduceRewards() {
 # params
 #   $1 = Staing Farm address
 stopProduceRewards() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=32499678 \
@@ -170,7 +170,7 @@ topUpRewards() {
     method_name="0x$(echo -n 'topUpRewards' | xxd -p -u | tr -d '\n')"
     lp_token="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=25000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -183,7 +183,7 @@ topUpRewards() {
 #   $1 = Staking Farm address
 #   $2 = APR value (MAX_PERCENT = 10_000; ex 25% = 2500 / 10_000)
 setMaxApr() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=25000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -196,9 +196,9 @@ setMaxApr() {
 #   $1 = Staing Farm address
 #   $2 = Address to whitelist
 addAddressToWhitelist() {
-    whitelist_address="0x$(erdpy wallet bech32 --decode $2)"
+    whitelist_address="0x$(mxpy wallet bech32 --decode $2)"
 
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=25000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -211,7 +211,7 @@ addAddressToWhitelist() {
 #   $1 = Staing Farm address
 #   $2 = Min unbond epochs
 setMinUnbondEpochs() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=25000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -223,7 +223,7 @@ setMinUnbondEpochs() {
 # params:
 #   $1 = Staing Farm address
 resumeContract() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=50000000 \
@@ -233,7 +233,7 @@ resumeContract() {
 # params
 #   $1 = Staing Farm address
 pauseContract() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=10000000 \
@@ -245,7 +245,7 @@ pauseContract() {
 #   $1 = Staing Farm address
 #   $2 = Gas limit
 setTransferExecGasLimit() {
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=30000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -257,19 +257,19 @@ setTransferExecGasLimit() {
 ### VIEW FUNCTIONS ###
 
 getMinUnbondEpochs() {
-    erdpy --verbose contract query $1 \
+    mxpy --verbose contract query $1 \
         --proxy=${PROXY} \
         --function=getMinUnbondEpochs || return
 }
 
 getBoostedYieldsFactors() {
-    erdpy --verbose contract query $1 \
+    mxpy --verbose contract query $1 \
         --proxy=${PROXY} \
         --function=getBoostedYieldsFactors || return
 }
 
 getFarmTokenSupply() {
-    erdpy --verbose contract query $1 \
+    mxpy --verbose contract query $1 \
         --proxy=${PROXY} \
         --function=getFarmTokenSupply || return
 }
@@ -299,7 +299,7 @@ stakeFarm() {
     method_name="0x$(echo -n 'stakeFarm' | xxd -p -u | tr -d '\n')"
     lp_token="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $1 --recall-nonce \
+    mxpy --verbose contract call $1 --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=100000000 \
@@ -315,11 +315,11 @@ stakeFarm() {
 #   $4 = address of staking contract
 claimRewards() {
     method_name="0x$(echo -n 'claimRewards' | xxd -p -u | tr -d '\n')"
-    user_address="$(erdpy wallet pem-address $WALLET_PEM)"
+    user_address="$(mxpy wallet pem-address $WALLET_PEM)"
     stake_token="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
-    farm_contract="0x$(erdpy wallet bech32 --decode $4)"
+    farm_contract="0x$(mxpy wallet bech32 --decode $4)"
 
-    erdpy --verbose contract call $OWNER --recall-nonce \
+    mxpy --verbose contract call $OWNER --recall-nonce \
         --pem=${WALLET_PEM} \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
         --gas-limit=500000000 \

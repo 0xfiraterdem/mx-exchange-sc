@@ -8,7 +8,7 @@ SIMPLE_LOCK_ADDRESS=""
 PAIR_ADDRESS=""
 
 deploySimpleLockContract() {
-    erdpy --verbose contract deploy --recall-nonce \
+    mxpy --verbose contract deploy --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=150000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -16,14 +16,14 @@ deploySimpleLockContract() {
         --bytecode="../output/simple-lock.wasm" \
         --outfile="deploy-simple-lock.interaction.json" --send || return
 
-    ADDRESS=$(erdpy data parse --file="deploy-simple-lock.interaction.json" --expression="data['emitted_tx']['address']")
+    ADDRESS=$(mxpy data parse --file="deploy-simple-lock.interaction.json" --expression="data['emitted_tx']['address']")
 
     echo ""
     echo "Simple lock Smart Contract address: ${ADDRESS}"
 }
 
 upgradeSimpleLockContract() {
-    erdpy --verbose contract upgrade $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract upgrade $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=150000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -40,7 +40,7 @@ issueLockedToken() {
     token_name="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
     token_ticker="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=100000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -51,7 +51,7 @@ issueLockedToken() {
 }
 
 setLocalRolesLockedToken() {
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=100000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -68,7 +68,7 @@ issueLpProxyToken() {
     token_name="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
     token_ticker="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=100000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -79,7 +79,7 @@ issueLpProxyToken() {
 }
 
 setLocalRolesLpProxyToken() {
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=100000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -95,7 +95,7 @@ issueFarmProxyToken() {
     token_name="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
     token_ticker="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=100000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -106,7 +106,7 @@ issueFarmProxyToken() {
 }
 
 setLocalRolesFarmProxyToken() {
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=100000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -120,9 +120,9 @@ setLocalRolesFarmProxyToken() {
 addLpToWhitelist() {
     first_token="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
     second_token="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
-    pair_address="0x$(erdpy wallet bech32 --decode $PAIR_ADDRESS)"
+    pair_address="0x$(mxpy wallet bech32 --decode $PAIR_ADDRESS)"
 
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=10000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -137,9 +137,9 @@ addLpToWhitelist() {
 removeLpFromWhitelist() {
     first_token="0x$(echo -n $1 | xxd -p -u | tr -d '\n')"
     second_token="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
-    pair_address="0x$(erdpy wallet bech32 --decode $PAIR_ADDRESS)"
+    pair_address="0x$(mxpy wallet bech32 --decode $PAIR_ADDRESS)"
 
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=10000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -153,10 +153,10 @@ removeLpFromWhitelist() {
 #   $2 = Farming Token identifier
 #   $3 = Farm type
 addFarmToWhitelist() {
-    farm_address="0x$(erdpy wallet bech32 --decode $1)"
+    farm_address="0x$(mxpy wallet bech32 --decode $1)"
     farming_token="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=10000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -170,10 +170,10 @@ addFarmToWhitelist() {
 #   $1 = Farming Token identifier
 #   $2 = Farm type
 removeFarmFromWhitelist() {
-    farm_address="0x$(erdpy wallet bech32 --decode $1)"
+    farm_address="0x$(mxpy wallet bech32 --decode $1)"
     farming_token="0x$(echo -n $2 | xxd -p -u | tr -d '\n')"
 
-    erdpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
+    mxpy --verbose contract call $SIMPLE_LOCK_ADDRESS --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=10000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \

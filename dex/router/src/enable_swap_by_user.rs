@@ -83,69 +83,89 @@ pub trait EnableSwapByUserModule:
     #[payable("*")]
     #[endpoint(setSwapEnabledByUser)]
     fn set_swap_enabled_by_user(&self, pair_address: ManagedAddress) {
+
         self.check_is_pair_sc(&pair_address);
         self.require_state_active_no_swaps(&pair_address);
-
-        let payment = self.call_value().single_esdt();
-
-        let own_sc_address = self.blockchain().get_sc_address();
-        let locked_token_data = self.blockchain().get_esdt_token_data(
-            &own_sc_address,
-            &payment.token_identifier,
-            payment.token_nonce,
-        );
-        let locked_token_attributes: LockedTokenAttributes<Self::Api> =
-            locked_token_data.decode_attributes();
-
-        let pair_lp_token_id = self.get_pair_lp_token_id(&pair_address);
-        require!(
-            locked_token_attributes.original_token_id == pair_lp_token_id,
-            "Invalid locked LP token"
-        );
-
-        let locked_lp_token_amount = payment.amount.clone();
-        let lp_token_safe_price_result =
-            self.get_lp_token_value(pair_address.clone(), locked_lp_token_amount);
-        let config = self.try_get_config(&lp_token_safe_price_result.common_token_id);
-        require!(
-            payment.token_identifier == config.locked_token_id,
-            "Invalid locked token"
-        );
-        require!(
-            lp_token_safe_price_result.safe_price_in_common_token >= config.min_locked_token_value,
-            "Not enough value locked"
-        );
-
-        let current_epoch = self.blockchain().get_block_epoch();
-        let locked_epochs = if current_epoch < locked_token_attributes.unlock_epoch {
-            locked_token_attributes.unlock_epoch - current_epoch
-        } else {
-            0
-        };
-        require!(
-            locked_epochs >= config.min_lock_period_epochs,
-            "Token not locked for long enough"
-        );
-
+    
         let caller = self.blockchain().get_caller();
         self.require_caller_initial_liquidity_adder(&pair_address, &caller);
-
+    
         self.set_fee_percents(pair_address.clone());
         self.pair_resume(pair_address.clone());
-
-        self.send().direct_esdt(
-            &caller,
-            &payment.token_identifier,
-            payment.token_nonce,
-            &payment.amount,
-        );
-
+    
+        let pair_tokens = self.get_pair_tokens(pair_address.clone());
+    
         self.emit_user_swaps_enabled_event(
             caller,
-            lp_token_safe_price_result.first_token_id,
-            lp_token_safe_price_result.second_token_id,
+            pair_tokens.first_token_id,
+            pair_tokens.second_token_id,
             pair_address,
         );
+        
+
+    //     self.check_is_pair_sc(&pair_address);
+    //     self.require_state_active_no_swaps(&pair_address);
+
+    //     let payment = self.call_value().single_esdt();
+
+    //     let own_sc_address = self.blockchain().get_sc_address();
+    //     let locked_token_data = self.blockchain().get_esdt_token_data(
+    //         &own_sc_address,
+    //         &payment.token_identifier,
+    //         payment.token_nonce,
+    //     );
+    //     let locked_token_attributes: LockedTokenAttributes<Self::Api> =
+    //         locked_token_data.decode_attributes();
+
+    //     let pair_lp_token_id = self.get_pair_lp_token_id(&pair_address);
+    //     require!(
+    //         locked_token_attributes.original_token_id == pair_lp_token_id,
+    //         "Invalid locked LP token"
+    //     );
+
+    //     let locked_lp_token_amount = payment.amount.clone();
+    //     let lp_token_safe_price_result =
+    //         self.get_lp_token_value(pair_address.clone(), locked_lp_token_amount);
+    //     let config = self.try_get_config(&lp_token_safe_price_result.common_token_id);
+    //     require!(
+    //         payment.token_identifier == config.locked_token_id,
+    //         "Invalid locked token"
+    //     );
+    //     require!(
+    //         lp_token_safe_price_result.safe_price_in_common_token >= config.min_locked_token_value,
+    //         "Not enough value locked"
+    //     );
+
+    //     let current_epoch = self.blockchain().get_block_epoch();
+    //     let locked_epochs = if current_epoch < locked_token_attributes.unlock_epoch {
+    //         locked_token_attributes.unlock_epoch - current_epoch
+    //     } else {
+    //         0
+    //     };
+    //     require!(
+    //         locked_epochs >= config.min_lock_period_epochs,
+    //         "Token not locked for long enough"
+    //     );
+
+    //     let caller = self.blockchain().get_caller();
+    //     self.require_caller_initial_liquidity_adder(&pair_address, &caller);
+
+    //     self.set_fee_percents(pair_address.clone());
+    //     self.pair_resume(pair_address.clone());
+
+    //     self.send().direct_esdt(
+    //         &caller,
+    //         &payment.token_identifier,
+    //         payment.token_nonce,
+    //         &payment.amount,
+    //     );
+
+    //     self.emit_user_swaps_enabled_event(
+    //         caller,
+    //         lp_token_safe_price_result.first_token_id,
+    //         lp_token_safe_price_result.second_token_id,
+    //         pair_address,
+    //     );
     }
 
     #[view(getEnableSwapByUserConfig)]

@@ -1,4 +1,4 @@
-WALLET_PEM="/home/elrond/elrondsdk/erdpy-venv/lib/python3.8/site-packages/erdpy/testnet/wallets/users/mike.pem"
+WALLET_PEM="/home/elrond/elrondsdk/mxpy-venv/lib/python3.8/site-packages/mxpy/testnet/wallets/users/mike.pem"
 PROXY="https://devnet-gateway.multiversx.com"
 CHAIN_ID="D"
 
@@ -9,7 +9,7 @@ VOTE_NFT_NAME="0x564f5445"
 VOTE_NFT_TICKER="0x564f5445"
 
 issueToken() {
-    erdpy --verbose contract call ${ESDT_ISSUE_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${ESDT_ISSUE_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -22,7 +22,7 @@ issueToken() {
 MEX_TOKEN_ID="0x4d45582d373631343430"
 
 issueVoteNFT() {
-    erdpy --verbose contract call ${ESDT_ISSUE_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${ESDT_ISSUE_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -40,7 +40,7 @@ VOTING_PERIOD_IN_BLOCKS=60
 MIN_WEIGHT_FOR_PROPOSAL=100
 
 deployGovernanceSC() {
-    erdpy --verbose contract deploy --recall-nonce \
+    mxpy --verbose contract deploy --recall-nonce \
         --bytecode=${GOVERNANCE_WASM_PATH} \
         --pem=${WALLET_PEM} \
         --gas-limit=200000000 \
@@ -59,7 +59,7 @@ CONTRACT_ADDRESS="erd1qqqqqqqqqqqqqpgqcqm9vxzc3ghjgxfyd5dps6xhwpuhgsg6a4sqtsqt6n
 CONTRACT_ADDRESS_HEX="0x00000000000000000500c0365618588a2f2419246d1a1868d7707974411aed60"
 
 setSpecialRolesVoteNFT() {
-    erdpy --verbose contract call ${ESDT_ISSUE_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${ESDT_ISSUE_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -72,7 +72,7 @@ PROPOSE_TRANSFER_AMOUNT=0xFFFF
 PROPOSE_ARGS=0x000000010100000000
 
 propose() {
-    erdpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -82,7 +82,7 @@ propose() {
 }
 
 propose() {
-    erdpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -92,27 +92,27 @@ propose() {
 }
 
 getPropose() {
-    erdpy --verbose contract query ${CONTRACT_ADDRESS} \
+    mxpy --verbose contract query ${CONTRACT_ADDRESS} \
         --proxy=${PROXY} \
         --function="getProposal" \
         --arguments $1
 }
 
 getProposalStatus() {
-    erdpy --verbose contract query ${CONTRACT_ADDRESS} \
+    mxpy --verbose contract query ${CONTRACT_ADDRESS} \
         --proxy=${PROXY} \
         --function="getProposalStatus" \
         --arguments $1
 }
 
 getQuorum() {
-    erdpy --verbose contract query ${CONTRACT_ADDRESS} \
+    mxpy --verbose contract query ${CONTRACT_ADDRESS} \
         --proxy=${PROXY} \
         --function="getQuorum"
 }
 
 upvote() {
-    erdpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -122,7 +122,7 @@ upvote() {
 }
 
 downvote() {
-    erdpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -132,7 +132,7 @@ downvote() {
 }
 
 execute() {
-    erdpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
+    mxpy --verbose contract call ${CONTRACT_ADDRESS} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \
@@ -144,7 +144,7 @@ execute() {
 SELF_ADDR="erd1uv40ahysflse896x4ktnh6ecx43u7cmy9wnxnvcyp7deg299a4sq6vaywa"
 
 redeem() {
-    erdpy --verbose contract call ${SELF_ADDR} --recall-nonce \
+    mxpy --verbose contract call ${SELF_ADDR} --recall-nonce \
         --pem=${WALLET_PEM} \
         --gas-limit=60000000 \
         --proxy=${PROXY} --chain=${CHAIN_ID} \

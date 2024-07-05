@@ -126,7 +126,7 @@ pub trait Router:
                     "Bad percents"
                 );
             } else {
-                sc_panic!("Bad percents length");
+                sc_panic!("Bad percents length {}",DEFAULT_TOTAL_FEE_PERCENT);
             }
         }
 
